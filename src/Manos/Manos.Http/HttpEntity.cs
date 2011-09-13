@@ -365,9 +365,14 @@ namespace Manos.Http {
 
 		private IUploadedFileCreator GetFileCreator ()
 		{
+			//MASSI: alway put files on disk, we need them there anyway...
+#if false
 			if (Headers.ContentLength == null || Headers.ContentLength >= MAX_BUFFERED_CONTENT_LENGTH)
 				return new TempFileUploadedFileCreator ();
 			return new InMemoryUploadedFileCreator ();
+#else
+			return new TempFileUploadedFileCreator ();
+#endif
 		}
 
 		private void OnParserError (HttpParser parser, string message, ByteBuffer buffer, int initial_position)

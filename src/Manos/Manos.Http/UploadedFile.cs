@@ -60,6 +60,11 @@ namespace Manos.Http {
 			Name = name;
 		 }
 
+		 public abstract string TempFile {
+		 	get;
+			protected set;
+		 }
+		
 		~UploadedFile ()
 		{
 			Dispose ();
@@ -98,6 +103,15 @@ namespace Manos.Http {
 
 		  private MemoryStream stream = new MemoryStream ();
 
+		 public override string TempFile {
+		 	get {
+				throw new NotImplementedException ("InMemoryUploadedFile is not backed by a temp file.");
+			}
+			protected set {
+				throw new NotImplementedException ("InMemoryUploadedFile is not backed by a temp file.");
+			}
+		 }
+
 	  	 public InMemoryUploadedFile (string name) : base (name)
 		 {
 		 }
@@ -129,9 +143,9 @@ namespace Manos.Http {
 			TempFile = temp_file;
 		 }
 	  	 
-		 public string TempFile {
+		 public override string TempFile {
 		 	get;
-			private set;
+			protected set;
 		 }
 
 		 public override long Length {
