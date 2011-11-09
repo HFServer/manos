@@ -59,6 +59,13 @@ namespace Manos.IO.Libev
 			{
 			}
 			
+			public override void Close ()
+			{
+				int err;
+				SocketFunctions.manos_socket_close (Handle.ToInt32 (), out err);
+				base.Close ();
+			}
+			
 			protected override void HandleRead ()
 			{
 				int err;
