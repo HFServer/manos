@@ -46,13 +46,14 @@ namespace Manos.IO.Libev
 			
 			protected override void Dispose (bool disposing)
 			{
+				base.Dispose (disposing);
+				
 				if (parent != null) {
 					RaiseEndOfStream ();
 				
 					receiveBuffer = null;
 					parent = null;
 				}
-				base.Dispose (disposing);
 			}
 			
 			public override void Flush ()
@@ -69,6 +70,7 @@ namespace Manos.IO.Libev
 			protected override void HandleRead ()
 			{
 				int err;
+				Array.Clear (receiveBuffer, 0, receiveBuffer.Length);
 				var received = SocketFunctions.manos_socket_receive (Handle.ToInt32 (), receiveBuffer,
 					receiveBuffer.Length, out err);
 				if (received < 0 && err != 0 || received == 0) {
