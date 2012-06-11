@@ -152,7 +152,7 @@ namespace Manos.Http {
 			string str = Encoding.ASCII.GetString (data.Bytes, pos, len);
 
 			str = HttpUtility.UrlDecode (str, Encoding.ASCII);
-			Path = Path == null ? str : String.Concat (Path, str);
+			Path = str;
 			return 0;
 		}
 
