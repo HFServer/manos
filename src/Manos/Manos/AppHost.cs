@@ -143,7 +143,7 @@ namespace Manos
 
 #endif
 
-		public static void Start (ManosApp application)
+		public static void Initialize (ManosApp application)
 		{
 			if (application == null)
 				throw new ArgumentNullException ("application");
@@ -152,7 +152,6 @@ namespace Manos
 
 			app.StartInternal ();
 
-			started = true;
 			
 			foreach (var ep in listenEndPoints) {
 				var server = new HttpServer (Context, HandleTransaction, Context.CreateTcpServerSocket (ep.AddressFamily));
@@ -168,7 +167,10 @@ namespace Manos
 //				
 //				servers.Add (server);
 			}
-
+		}
+		
+		public static void Start (ManosApp application) {
+			started = true;
 			context.Start ();
 		}
 
