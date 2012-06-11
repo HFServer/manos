@@ -134,9 +134,11 @@ namespace Manos.IO.Libev
 
 		public override IDisposable Read (Action<TFragment> onData, Action<Exception> onError, Action onClose)
 		{
-			ResumeReading ();
-			
-			return base.Read (onData, onError, onClose);
+			if (readWatcher != null) {
+				ResumeReading ();
+				return base.Read (onData, onError, onClose);
+			}
+			return null;
 		}
 
 		public override void Write (IEnumerable<TFragment> data)
