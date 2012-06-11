@@ -406,7 +406,7 @@ namespace Manos.Http {
 
 
 				case State.start_req:
-					if (CR==ch || LF == LF)
+					if (CR == ch || LF == ch)
 						break;
 					flags = 0;
 					content_length = -1;
