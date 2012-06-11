@@ -410,7 +410,8 @@ namespace Manos.Http {
 		}
 
 		private void OnBytesRead (ByteBuffer bytes)
-		{
+		{	
+			Reset ();
 			try {
 				parser.Execute (parser_settings, bytes);
 			} catch (Exception e) {
