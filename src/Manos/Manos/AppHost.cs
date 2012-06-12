@@ -76,6 +76,11 @@ namespace Manos
 					log = new Manos.Logging.ManosConsoleLogger ("manos", LogLevel.Debug);
 				return log;
 			}
+			set {
+				if (value != null) {
+					log = value;
+				}
+			}
 		}
 
 		public static Context Context {
@@ -181,7 +186,13 @@ namespace Manos
 
 		public static void HandleTransaction (IHttpTransaction con)
 		{
-			app.HandleTransaction (app, con);
+			try {
+				log.Debug ("HandleTransaction: START ({0}) \"{1}\"", con.Request.Socket.RemoteEndpoint.ToString(), con.Request.Path);
+				app.HandleTransaction (app, con);
+				log.Debug ("HandleTransaction: END ({0}) \"{1}\"", con.Request.Socket.RemoteEndpoint.ToString(), con.Request.Path);
+			} catch (Exception ex) {
+				log.Debug ("HandleTransactionException: {0}", ex);
+			}	
 		}
 
 		public static void AddPipe (IManosPipe pipe)
