@@ -411,7 +411,9 @@ namespace Manos.Http {
 
 		private void OnBytesRead (ByteBuffer bytes)
 		{	
-			Reset ();
+			if (finished_reading) {
+				Reset ();
+			}
 			try {
 				parser.Execute (parser_settings, bytes);
 			} catch (Exception e) {
