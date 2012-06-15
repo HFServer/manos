@@ -295,8 +295,8 @@ namespace Manos.Http {
 				string fileRef = null;
 				if (entity is HttpRequest) {
 					Manos.Collections.DataDictionary queryData = null;
-					if (((HttpRequest) entity).query_data_builder.Length != 0) {
-						queryData = HttpUtility.ParseUrlEncodedData (((HttpRequest) entity).query_data_builder.ToString ());
+					if (((HttpRequest) entity).QueryDataString.Length != 0) {
+						queryData = HttpUtility.ParseUrlEncodedData (((HttpRequest) entity).QueryDataString);
 					}
 					fileRef = queryData ["ref"];
 				}
