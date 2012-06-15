@@ -41,7 +41,7 @@ namespace Manos.Http {
 
 	public class HttpRequest : HttpEntity, IHttpRequest {
 		
-		private StringBuilder query_data_builder = new StringBuilder ();
+		public StringBuilder query_data_builder = new StringBuilder ();
 
 		private DataDictionary uri_data;
 		private	DataDictionary query_data;

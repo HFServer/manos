@@ -242,8 +242,12 @@ namespace Manos.Http {
 			string key = encoding.GetString (header_key.ToArray ());
 			string value = encoding.GetString (header_value.ToArray ());
 
-			if (String.Compare(key,"Content-Disposition",true) == 0)
-				ParseContentDisposition (value);
+			if (String.Compare(key,"Content-Disposition",true) == 0) {
+				ParseContentDisposition (value, entity);
+				if (uploaded_file != null && uploaded_file.FileRef != null) {
+					entity.AddInProgressFile (uploaded_file.FileRef, uploaded_file); 	
+				}
+			}
 			else if (String.Compare(key,"Content-Type",true) == 0)
 				ParseContentType (value);
 
@@ -278,17 +282,26 @@ namespace Manos.Http {
 
 			if (uploaded_file.Length > 0)
 				entity.Files.Add (current_name, uploaded_file);
-
+			entity.RemoveInProgressFile (uploaded_file.FileRef);
 			uploaded_file = null;
 		}
 
-		public void ParseContentDisposition (string str)
+		public void ParseContentDisposition (string str, HttpEntity entity)
 		{
 			current_name = GetContentDispositionAttribute (str, "name");
 			current_filename = GetContentDispositionAttributeWithEncoding (str, "filename");
-
-			if (!String.IsNullOrEmpty (current_filename)) 
-				uploaded_file = file_creator.Create (current_filename);
+			
+			if (!String.IsNullOrEmpty (current_filename)) {
+				string fileRef = null;
+				if (entity is HttpRequest) {
+					Manos.Collections.DataDictionary queryData = null;
+					if (((HttpRequest) entity).query_data_builder.Length != 0) {
+						queryData = HttpUtility.ParseUrlEncodedData (((HttpRequest) entity).query_data_builder.ToString ());
+					}
+					fileRef = queryData ["ref"];
+				}
+				uploaded_file = file_creator.Create (current_filename, fileRef, entity.Headers.ContentLength);
+			}
 		}
 
 		public void ParseContentType (string str)

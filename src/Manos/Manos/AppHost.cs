@@ -52,7 +52,7 @@ namespace Manos
 		private static IManosLogger log;
 		private static List<IManosPipe> pipes;
 		private static Context context;
-
+		
 		static AppHost ()
 		{
 			context = Context.Create ();

@@ -83,9 +83,48 @@ namespace Manos.Http {
 		{
 			Dispose ();
 		}
-
+		
+		List<string> inProgressFileRefs;
+		
+		private static Dictionary<string, UploadedFile> inProgressFiles = new Dictionary<string, UploadedFile> ();
+		
+		public static UploadedFile GetInProgressFile (string fileRef) {
+			if (fileRef != null && inProgressFiles.ContainsKey (fileRef)) {
+				return inProgressFiles [fileRef];
+			} else {
+				return null;	
+			}
+		}
+		
+		public void RemoveInProgressFile (string fileRef) {
+			if (fileRef != null && inProgressFiles.ContainsKey (fileRef)) {
+				inProgressFiles.Remove (fileRef);
+				if (inProgressFileRefs != null) {
+					inProgressFileRefs.Remove (fileRef);
+				}
+			}
+		}
+		
+		public bool AddInProgressFile (string fileRef, UploadedFile file) {
+			if (fileRef != null && file != null) {
+				inProgressFiles.Add (fileRef, file);
+				if (inProgressFileRefs == null) {
+					inProgressFileRefs = new List<string> ();
+				}
+				inProgressFileRefs.Remove (fileRef);
+				return true;
+			} else {
+				return false;	
+			}
+		}
+		
+		
 		public void Dispose ()
 		{
+			foreach (string fileRef in inProgressFileRefs) {
+				RemoveInProgressFile (fileRef);
+			}
+			
 			Socket = null;
 
 			if (Stream != null) {

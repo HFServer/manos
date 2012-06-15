@@ -33,30 +33,32 @@ namespace Manos.Http {
 
 	public interface IUploadedFileCreator {
 
-		UploadedFile Create (string name);
+		UploadedFile Create (string name, string fileRef, long? length);
 	}
 
 	public class TempFileUploadedFileCreator : IUploadedFileCreator {
 
-		public UploadedFile Create (string name)
+		public UploadedFile Create (string name, string fileRef, long? length)
 		{
 			string temp_file = Path.GetTempFileName ();
-			return new TempFileUploadedFile (name, temp_file);
+			return new TempFileUploadedFile (name, temp_file, fileRef, length);
 		}
 	}
 
 	public class InMemoryUploadedFileCreator : IUploadedFileCreator {
 
-		public UploadedFile Create (string name)
+		public UploadedFile Create (string name, string fileRef, long? length)
 		{
-			return new InMemoryUploadedFile (name);
+			return new InMemoryUploadedFile (name, fileRef, length);
 		}
 	}
 	
 	public abstract class UploadedFile : IDisposable {
 
-	  	 public UploadedFile (string name)
+	  	 public UploadedFile (string name, string fileRef, long? length)
 		 {
+			Length = length;
+			FileRef = fileRef;
 			Name = name;
 		 }
 
@@ -73,6 +75,11 @@ namespace Manos.Http {
 		public string Name {
 		 	get;
 			private set;
+		}
+		
+		public string FileRef {
+		 	get;
+			private set;
 		 }
 
 		public void Dispose ()
@@ -86,7 +93,12 @@ namespace Manos.Http {
 			set;
 		 }
 
-		 public abstract long Length {
+		public long? Length {
+		 	get;
+			private set;
+		}
+		
+		 public abstract long CurrentLength {
 		 	get;
 		 }
 
@@ -112,11 +124,11 @@ namespace Manos.Http {
 			}
 		 }
 
-	  	 public InMemoryUploadedFile (string name) : base (name)
+	  	 public InMemoryUploadedFile (string name, string fileRef, long? length) : base (name, fileRef, length)
 		 {
 		 }
 		 
-		 public override long Length {
+		 public override long CurrentLength {
 		 	get {
 				return stream.Length;
 			}
@@ -138,7 +150,7 @@ namespace Manos.Http {
 
 		  FileStream stream;
 		  
-	  	 public TempFileUploadedFile (string name, string temp_file) : base (name)
+	  	 public TempFileUploadedFile (string name, string temp_file, string fileRef, long? length) : base (name, fileRef, length)
 		 {
 			TempFile = temp_file;
 		 }
@@ -148,7 +160,7 @@ namespace Manos.Http {
 			protected set;
 		 }
 
-		 public override long Length {
+		 public override long CurrentLength {
 		 	get {
 			    FileInfo f = new FileInfo (TempFile);
 			    return f.Length;
