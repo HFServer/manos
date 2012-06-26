@@ -1,11 +1,14 @@
 
 manosdir=$(bindir)
 
-pkglib_DATA = $(top_srcdir)/build/Manos.dll $(top_srcdir)/build/Nini.dll
+#pkglib_DATA = $(top_srcdir)/build/Manos.dll $(top_srcdir)/build/Nini.dll
+manos_DATA = $(top_srcdir)/build/Manos.dll $(top_srcdir)/build/Nini.dll
 
 manos_proj_file = Manos.csproj
 manos_sources_in = Assembly/AssemblyInfo.cs.in
-manos_sources = $(manos_proj_file) $(shell  xbuild /verbosity:minimal /target:ListSources | sed -e '1,3d' -e "s/\;/ /g")
+#manos_sources = $(manos_proj_file) $(shell  xbuild /verbosity:minimal /target:ListSources | sed -e '1,3d' -e "s/\;/ /g")
+manos_extra_sources = `xbuild /verbosity:minimal /target:ListSources | sed -e '1,3d' -e "s/\;/ /g"`
+manos_sources = $(manos_proj_file) $(manos_extra_source)
 
 EXTRA_DIST = $(manos_sources) $(manos_sources_in)
 CLEANFILES = $(top_srcdir)/build/Manos.dll
