@@ -187,11 +187,11 @@ namespace Manos
 		public static void HandleTransaction (IHttpTransaction con)
 		{
 			try {
-				log.Debug ("HandleTransaction: START ({0}) \"{1}\"", con.Request.Socket.RemoteEndpoint.ToString(), con.Request.Path);
+				Log.Debug ("HandleTransaction: START ({0}) \"{1}\"", con.Request.Socket.RemoteEndpoint.ToString(), con.Request.Path);
 				app.HandleTransaction (app, con);
-				log.Debug ("HandleTransaction: END ({0}) \"{1}\"", con.Request.Socket.RemoteEndpoint.ToString(), con.Request.Path);
+				Log.Debug ("HandleTransaction: END ({0}) \"{1}\"", con.Request.Socket.RemoteEndpoint.ToString(), con.Request.Path);
 			} catch (Exception ex) {
-				log.Debug ("HandleTransactionException: {0}", ex);
+				Log.Debug ("HandleTransactionException: {0}", ex);
 			}	
 		}
 

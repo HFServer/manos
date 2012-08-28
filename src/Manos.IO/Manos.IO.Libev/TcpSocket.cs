@@ -46,14 +46,13 @@ namespace Manos.IO.Libev
 			
 			protected override void Dispose (bool disposing)
 			{
-				base.Dispose (disposing);
-				
 				if (parent != null) {
 					RaiseEndOfStream ();
 				
 					receiveBuffer = null;
 					parent = null;
 				}
+				base.Dispose (disposing);
 			}
 			
 			public override void Flush ()
@@ -77,6 +76,8 @@ namespace Manos.IO.Libev
 					if (received < 0) {
 						RaiseError (Errors.SocketStreamFailure ("Read failure", err));
 					}
+				}
+				if (received <= 0) {
 					Close ();
 				} else {
 					byte [] newBuffer = new byte [received];

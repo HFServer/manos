@@ -146,6 +146,8 @@ namespace Manos.Tool
 				AppHost.SecureListenAt (new Manos.IO.IPEndPoint (listenAddress, SecurePort.Value), CertificateFile, KeyFile);
 				Console.WriteLine ("Running {0} on secure port {1}.", app, SecurePort);
 			}
+
+			AppHost.Initialize (app);
 			AppHost.Start (app);
 		}
 		

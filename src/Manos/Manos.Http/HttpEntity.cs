@@ -121,8 +121,10 @@ namespace Manos.Http {
 		
 		public void Dispose ()
 		{
-			foreach (string fileRef in inProgressFileRefs) {
-				RemoveInProgressFile (fileRef);
+			if (inProgressFileRefs != null) {
+				foreach (string fileRef in inProgressFileRefs) {
+					RemoveInProgressFile (fileRef);
+				}
 			}
 			
 			Socket = null;
