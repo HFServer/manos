@@ -168,10 +168,14 @@ namespace Manos.Http
 		{
 			Socket.GetSocketStream ().Write (ResponseFinishedCallback ());
 		}
-		
+
+		IBaseWatcher handler = null;
+
 		IEnumerable<ByteBuffer> ResponseFinishedCallback ()
 		{
-			IBaseWatcher handler = null;
+			if (handler != null) {
+				handler.Dispose ();
+			}
 			handler = Server.Context.CreateIdleWatcher (delegate {
 				handler.Dispose ();
 				responseFinished = true;
