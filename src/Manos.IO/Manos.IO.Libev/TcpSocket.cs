@@ -19,6 +19,8 @@ namespace Manos.IO.Libev
 			public TcpSocketStream (TcpSocket parent, IntPtr handle)
 				: base (parent.Context, handle)
 			{
+				//Console.WriteLine ("Open socket " + Handle.ToInt32 ());
+
 				this.parent = parent;
 			}
 			
@@ -61,9 +63,14 @@ namespace Manos.IO.Libev
 			
 			public override void Close ()
 			{
-				int err;
-				SocketFunctions.manos_socket_close (Handle.ToInt32 (), out err);
-				base.Close ();
+				if (Handle != IntPtr.Zero) {
+					int err;
+					SocketFunctions.manos_socket_close (Handle.ToInt32 (), out err);
+					//Console.WriteLine ("Close socket " + Handle.ToInt32 ());
+					base.CloseHandle ();
+					base.Close ();
+				}
+				//Console.WriteLine ("Try to close a already close socket ");
 			}
 			
 			protected override void HandleRead ()

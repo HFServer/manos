@@ -149,10 +149,16 @@ namespace Manos.IO.Libev
 		
 		protected override void Dispose(bool disposing)
 		{
+			CloseHandle ();
+			base.Dispose (disposing);
+		}
+
+		protected void CloseHandle()
+		{
 			if (Handle != IntPtr.Zero) {
 				PauseReading ();
 				PauseWriting ();
-
+				
 				readWatcher.Dispose ();
 				writeWatcher.Dispose ();
 				
@@ -160,16 +166,16 @@ namespace Manos.IO.Libev
 					readTimeoutWatcher.Dispose ();
 				if (writeTimeoutWatcher != null)
 					writeTimeoutWatcher.Dispose ();
-
+				
 				readWatcher = null;
 				writeWatcher = null;
 				readTimeoutWatcher = null;
 				writeTimeoutWatcher = null;
-			
+				
 				Handle = IntPtr.Zero;
 			}
-			base.Dispose (disposing);
 		}
+		
 
 		protected abstract void HandleRead ();
 	}
