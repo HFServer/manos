@@ -82,11 +82,7 @@ namespace Manos.Http {
 			private set;
 		 }
 
-		public void Dispose ()
-		{
-			if (Contents != null)
-				Contents.Close ();
-		}
+		public abstract void Dispose ();
 
 		public string ContentType {
 		 	get;
@@ -134,6 +130,11 @@ namespace Manos.Http {
 			}
 		 }
 
+		 public override void Dispose () {
+			if (Contents != null)
+				Contents.Close ();
+		 }
+
 		 public override Stream Contents {
 		 	get {
 				return stream;
@@ -174,12 +175,19 @@ namespace Manos.Http {
 				return stream;
 			}
 		 }
+		 public override void Dispose () {
+			if (stream != null) {
+				stream = null;
+				stream.Close ();
+			}
+		 }
 
-		 public override void Finish ()
-		 {
+		 public override void Finish () {
 			 stream.Flush ();
-			 stream.Close ();
-			 stream = null;
+			 if (stream != null) {
+			 	stream.Close ();
+				stream = null;
+			 }
 		 }
 	  }
 }
