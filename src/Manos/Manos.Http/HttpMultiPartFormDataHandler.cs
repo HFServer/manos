@@ -40,8 +40,7 @@ namespace Manos.Http {
 
 			InHeaderKey,
 			InHeaderValue,
-			PostHeader1,
-			PostHeader2,
+			PostHeader,
 
 			InFormData,
 			InFileData,
@@ -176,36 +175,31 @@ namespace Manos.Http {
 
 				case State.InHeaderValue:
 					if (c == '\r') {
-						state = State.PostHeader1;
+						HandleHeader (entity);
+						header_key.Clear ();
+						header_value.Clear ();
+						state = State.PostHeader;
 						break;
 					}
 
 					header_value.Add (c);
 					break;
 
-				case State.PostHeader1:
+				case State.PostHeader:
 					if (c != '\n')
 						throw new Exception (String.Format ("Invalid char '{0}' in post header 1.", c));
-					state = State.PostHeader2;
-					break;
-
-				case State.PostHeader2:
-					HandleHeader (entity);
-					header_key.Clear ();
-					header_value.Clear ();
 					state = State.InHeaderKey;
 					break;
 
 				case State.InFormData:
 					if (CheckStartingBoundary (str_data, pos))
 						break;
-
 					form_data.Add (c);
 					break;
 
 				case State.InFileData:
 					if (CheckStartingBoundary (str_data, pos))
-						break;;
+						break;
 
 					if (uploaded_file != null)
 						uploaded_file.Contents.WriteByte (c);
@@ -217,7 +211,6 @@ namespace Manos.Http {
 				not_boundary = false;
 			}
 		}
-
 		private bool CheckStartingBoundary (byte [] str_data, int pos)
 		{
 			if (not_boundary)
@@ -239,18 +232,17 @@ namespace Manos.Http {
 
 		private void HandleHeader (HttpEntity entity)
 		{
-			string key = encoding.GetString (header_key.ToArray ());
-			string value = encoding.GetString (header_value.ToArray ());
+			string key = System.Text.Encoding.ASCII.GetString (header_key.ToArray ()).Trim ();
+			string value = System.Text.Encoding.UTF8.GetString (header_value.ToArray ()).Trim ();
 
 			if (String.Compare(key,"Content-Disposition",true) == 0) {
 				ParseContentDisposition (value, entity);
 				if (uploaded_file != null && uploaded_file.FileRef != null) {
 					entity.AddInProgressFile (uploaded_file.FileRef, uploaded_file); 	
 				}
-			}
-			else if (String.Compare(key,"Content-Type",true) == 0)
+			} else if (String.Compare(key,"Content-Type",true) == 0) {
 				ParseContentType (value);
-
+			}
 		}
 
 		public void Finish (HttpEntity entity)
@@ -286,10 +278,10 @@ namespace Manos.Http {
 			uploaded_file = null;
 		}
 
-		public void ParseContentDisposition (string str, HttpEntity entity)
+		public void ParseContentDisposition (string UTF8string, HttpEntity entity)
 		{
-			current_name = GetContentDispositionAttribute (str, "name");
-			current_filename = GetContentDispositionAttributeWithEncoding (str, "filename");
+			current_name = GetContentDispositionAttribute (UTF8string, "name");
+			current_filename = GetContentDispositionAttribute (UTF8string, "filename");
 			
 			if (!String.IsNullOrEmpty (current_filename)) {
 				string fileRef = null;
