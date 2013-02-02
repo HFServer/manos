@@ -44,6 +44,7 @@ namespace Manos.IO
 				|| Environment.OSVersion.Platform == PlatformID.Win32Windows
 				|| Environment.OSVersion.Platform == PlatformID.WinCE;
 #endif
+			Console.WriteLine ("TQ: useManagedImpl:" + useManagedImpl);
 		}
 		
 		/// <summary>

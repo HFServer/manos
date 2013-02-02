@@ -3,6 +3,7 @@ using Libev;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Manos.IO.Libev
 {
@@ -64,11 +65,20 @@ namespace Manos.IO.Libev
 			public override void Close ()
 			{
 				if (Handle != IntPtr.Zero) {
-					int err;
-					SocketFunctions.manos_socket_close (Handle.ToInt32 (), out err);
-					//Console.WriteLine ("Close socket " + Handle.ToInt32 ());
-					base.CloseHandle ();
-					base.Close ();
+
+					lock (TcpSocket.OpenHandles) {
+						if (! TcpSocket.OpenHandles.Contains(Handle.ToInt32 ())) {
+							Console.WriteLine ("ERROR!!!! Handle already closed.");
+						} else {
+							TcpSocket.OpenHandles.Remove(Handle.ToInt32 ());
+
+							int err;
+							SocketFunctions.manos_socket_close (Handle.ToInt32 (), out err);
+							//Console.WriteLine ("Close socket " + Handle.ToInt32 ());
+							base.CloseHandle ();
+							base.Close ();
+						}
+					}
 				}
 				//Console.WriteLine ("Try to close a already close socket ");
 			}
@@ -137,7 +147,9 @@ namespace Manos.IO.Libev
 			}
 			return stream;
 		}
-		
+
+		public static List<int> OpenHandles = new List<int> ();
+
 		public void Listen (int backlog, Action<ITcpSocket> callback)
 		{
 			CheckDisposed ();
@@ -151,7 +163,16 @@ namespace Manos.IO.Libev
 			
 			int error;
 			var result = SocketFunctions.manos_socket_listen (fd, backlog, out error);
-			
+
+			lock (OpenHandles) {
+				if (OpenHandles.Contains(fd)) {
+					Console.WriteLine ("ERROR!!!! Handle already opened. Generate an error");
+					throw new Exception ("Handle already open!");
+				} else {
+					OpenHandles.Add(fd);
+				}
+			}
+
 			if (result < 0) {
 				throw Errors.SocketFailure ("Listen failure", error);
 			}
@@ -162,6 +183,9 @@ namespace Manos.IO.Libev
 				if (client < 0 && error != 0) {
 					throw new Exception (string.Format ("Error while accepting: {0}", Errors.ErrorToString (error)));
 				} else if (client > 0) {
+					lock (OpenHandles) {
+						OpenHandles.Add(client);
+					}
 					var socket = new TcpSocket (Context, AddressFamily, client, LocalEndpoint, ep);
 					callback (socket);
 				}
