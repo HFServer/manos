@@ -69,6 +69,7 @@ namespace Manos.Tool
 			Console.WriteLine ("Go to http://localhost:{0}/ to see your docs.", Port);
 			
 			AppHost.ListenAt (new Manos.IO.IPEndPoint (Manos.IO.IPAddress.Any, Port));
+			AppHost.Initialize (docs);
 			AppHost.Start (docs);
 		}
 	}
