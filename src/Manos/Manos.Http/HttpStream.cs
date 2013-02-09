@@ -120,6 +120,8 @@ namespace Manos.Http
 
 		public void SendFile (string file_name)
 		{
+			chunk_encode = false;
+
 			EnsureMetadata ();
 			
 			var len = new FileInfo (file_name).Length;

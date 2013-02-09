@@ -114,9 +114,15 @@ namespace Manos.IO.Managed
 			
 			public void SendFile (string file)
 			{
+
 				parent.socket.BeginSendFile (file, ar => {
-					parent.socket.EndSendFile (ar);
-				}, null);
+
+					// Retrieve the socket from the state object.
+					Socket c = (Socket) ar.AsyncState;
+					
+					// Complete sending the data to the remote device.
+					c.EndSendFile(ar);
+				}, parent.socket);
 			}
 		}
 		
