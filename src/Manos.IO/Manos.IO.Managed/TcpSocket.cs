@@ -184,24 +184,28 @@ namespace Manos.IO.Managed
 		{
 			try {
 				socket.Listen (backlog);
-				AcceptOne (callback);
+				AcceptOne (callback, socket);
 			} catch (System.Net.Sockets.SocketException e) {
 				throw new Manos.IO.SocketException ("Listen failure", Errors.ErrorToSocketError (e.SocketErrorCode));
 			}
 		}
 		
-		void AcceptOne (Action<ITcpSocket> callback)
+		void AcceptOne (Action<ITcpSocket> callback, System.Net.Sockets.Socket server)
 		{
-			socket.BeginAccept (ar => {
+			server.BeginAccept (ar => {
 				if (!disposed) {
-					var sock = socket.EndAccept (ar);
-					
-					Context.Enqueue (delegate {
-						callback (new TcpSocket (Context, AddressFamily, sock));
-						AcceptOne (callback);
+					//var sock = socket.EndAccept (ar);
+
+					Socket srv = (Socket) ar.AsyncState;
+					Socket clt = srv.EndAccept (ar);
+
+					Context.Enqueue (() => {
+						callback (new TcpSocket (Context, AddressFamily, clt));
 					});
+
+					AcceptOne (callback, srv);
 				}
-			}, null);
+			}, server);
 		}
 	}
 }

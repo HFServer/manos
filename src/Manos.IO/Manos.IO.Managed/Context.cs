@@ -113,15 +113,17 @@ namespace Manos.IO.Managed
 				prep.Invoke ();
 			}
 			int count = 0;
-			lock (this) {
+			lock (syncRoot) {
 				count = outstanding.Count;
 			}
 			while (count-- > 0) {
 				Action cb;
-				lock (this) {
+				lock (syncRoot) {
 					cb = outstanding.Dequeue ();
 				}
-				cb ();
+				if (cb != null) {
+					cb ();
+				}
 			}
 			foreach (var idle in idles.ToArray ()) {
 				idle.Invoke ();

@@ -188,9 +188,13 @@ namespace Manos.Http
 			}
 			
 			if (callback != null) {
-				if (write_ops == null)
+				if (write_ops == null) {
 					write_ops = new Queue<object> ();
-				write_ops.Enqueue (callback);
+				}
+
+				lock (write_ops) {
+					write_ops.Enqueue (callback);
+				}
 			}
 
 			WriteMetadata ();
@@ -213,8 +217,15 @@ namespace Manos.Http
 		public void SendBufferedOps ()
 		{
 			if (write_ops != null) {
-				while (write_ops.Count > 0) {
-					var op = write_ops.Dequeue ();
+				int count = 0;
+				lock (write_ops) {
+					count = write_ops.Count;
+				}
+				while (count > 0) {
+					object op = null;
+					lock (write_ops) {
+						op = write_ops.Dequeue ();
+					}
 					if (op is ByteBuffer) {
 						SocketStream.Write ((ByteBuffer) op);
 					} else if (op is string) {
@@ -224,6 +235,9 @@ namespace Manos.Http
 						SocketStream.Write (SendCallback ((Action) op));
 					} else {
 						throw new InvalidOperationException ();
+					}
+					lock (write_ops) {
+						count = write_ops.Count;
 					}
 				}
 			}
@@ -264,10 +278,13 @@ namespace Manos.Http
 				return;
 			}
 
-			if (write_ops == null)
+			if (write_ops == null) {
 				write_ops = new Queue<object> ();
+			}
 
-			write_ops.Enqueue (buffer);
+			lock (write_ops) {
+				write_ops.Enqueue (buffer);
+			}
 		}
 
 		private void QueueFile (string file)
@@ -277,10 +294,13 @@ namespace Manos.Http
 				return;
 			}
 
-			if (write_ops == null)
+			if (write_ops == null) {
 				write_ops = new Queue<object> ();
+			}
 
-			write_ops.Enqueue (file);
+			lock (write_ops) {
+				write_ops.Enqueue (file);
+			}
 		}
 
 		private void SendChunk (long l, bool last)
