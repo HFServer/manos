@@ -114,15 +114,18 @@ namespace Manos.IO.Managed
 			
 			public void SendFile (string file)
 			{
-
-				parent.socket.BeginSendFile (file, ar => {
-
-					// Retrieve the socket from the state object.
-					Socket c = (Socket) ar.AsyncState;
-					
-					// Complete sending the data to the remote device.
-					c.EndSendFile(ar);
-				}, parent.socket);
+				Context.Enqueue (delegate {
+					parent.socket.BeginSendFile (file, ar => {
+	
+						try {
+							// Retrieve the socket from the state object.
+							Socket c = (Socket) ar.AsyncState;
+							
+							// Complete sending the data to the remote device.
+							c.EndSendFile(ar);
+						} catch { }
+					}, parent.socket);
+				});
 			}
 		}
 		
