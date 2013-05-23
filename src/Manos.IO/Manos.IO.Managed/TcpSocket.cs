@@ -76,8 +76,9 @@ namespace Manos.IO.Managed
 						if (error != System.Net.Sockets.SocketError.Success) {
 							RaiseError (new Manos.IO.SocketException ("Read failure", Errors.ErrorToSocketError (error)));
 						} else if (len == 0) {
-							RaiseEndOfStream ();
-							Close ();
+							//RaiseEndOfStream ();
+							//Close ();
+							DispatchRead ();
 						} else {
 							byte [] newBuffer = new byte [len];
 							Buffer.BlockCopy (buffer, 0, newBuffer, 0, len);
