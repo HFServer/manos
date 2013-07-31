@@ -514,15 +514,20 @@ namespace Manos.Http {
 						break;
 					case SLASH:
 						path_mark = p;
+						state = State.req_path;
 						break;
 					case SPACE:
 						/* The request line looks like:
 						 *   "GET http://foo.bar.com HTTP/1.1"	
 						 * That is, there is no path.	
 						 */
-						settings.RaiseOnUrl (this, data, url_mark, p-url_mark);
-						url_mark = -1;
-						state = State.req_http_start;
+						//settings.RaiseOnUrl (this, data, url_mark, p-url_mark);
+						//url_mark = -1;
+						//state = State.req_http_start;
+						settings.RaiseOnError (this, "invalid request absolute url: "+ch, data, p_err);
+						//settings.RaiseOnUrl (this, data, url_mark, p-url_mark);
+						//url_mark = -1;
+						//state = State.req_http_start;
 						break;
 					default:
 						settings.RaiseOnError(this, "host error in method line", data, p_err);
