@@ -22,6 +22,7 @@ namespace Manos.IO.Managed
 				: base (parent.Context, 4 * 1024)
 			{
 				this.parent = parent;
+				this.ReadTimeout = new TimeSpan (0, 20, 0); // no data read timeout set to 20 minutes
 			}
 			
 			public override long Position {

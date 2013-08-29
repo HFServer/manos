@@ -383,6 +383,9 @@ namespace Manos.IO
 			if (onError != null) {
 				onError (exception);
 			}
+
+			// Force close socket
+			this.Close ();
 		}
 		
 		/// <summary>
