@@ -33,3 +33,4 @@ configure
 *.pc
 missing
 .*.swp
+/.gradle

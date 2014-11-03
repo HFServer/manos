@@ -1,0 +1,46 @@
+def extractVersionNumberFromAutoconf () {
+  def match = file('configure.ac').text =~ /AM_INIT_AUTOMAKE\(manos,\s*((\d|\.)+)\)/
+  assert match, 'Failed to extract version number from configure.ac file'
+  return match[0][1]
+}
+
+group = 'hyperfair'
+version = extractVersionNumberFromAutoconf ()
+
+task configure(type: Exec) {
+  executable './autogen.sh'
+  inputs.file 'autogen.sh'
+  outputs.file 'configure'
+}
+
+task build(type: Exec, dependsOn: configure) {
+  executable 'make'
+  inputs.source fileTree('.') {
+    include '**/*.cs'
+  }
+  outputs.dir buildDir
+}
+
+task zip(type: Zip, dependsOn: build) {
+  from buildDir
+  include '*.dll'
+  include '*.exe'
+  include '*.mdb'
+  destinationDir buildDir
+}
+
+apply plugin: 'ivy-publish'
+
+publishing {
+  repositories {
+    ivy {
+      url '../artifacts'
+    }
+  }
+
+  publications {
+    assemblies(IvyPublication) {
+      artifact zip
+    }
+  }
+}
