@@ -27,7 +27,6 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-
 using Manos.IO;
 
 namespace Manos.Http {
@@ -82,20 +81,25 @@ namespace Manos.Http {
 
 			state = State.InBoundary;
 		}
-		
+		bool firstBlock = true;
+		int strippedCount = 0;
 		public void HandleData (HttpEntity entity, ByteBuffer data, int pos, int len)
 		{
-			// string str_data = encoding.GetString (data.Bytes, pos, len);
-			byte [] str_data = data.Bytes;
-
+			//string str_data = encoding.GetString (data.Bytes, pos, len);
+			byte[] str_data = data.Bytes;
 			int begin = pos;
 			int end = begin + len;
 
 			pos = begin - 1;
 
 			while (pos < end - 1 && state != State.Finished) {
-
 				byte c = str_data [++pos];
+
+				if (firstBlock && c != '-') {
+					strippedCount++;
+					continue;
+				}
+				firstBlock = false;
 
 				switch (state) {
 				case State.InBoundary:
@@ -269,7 +273,7 @@ namespace Manos.Http {
 				return;
 
 			// Chop off the \r\n that gets appended before the boundary marker
-			uploaded_file.Contents.SetLength (uploaded_file.Contents.Position - 2);				
+			uploaded_file.Contents.SetLength (uploaded_file.Contents.Position - 2 + strippedCount);
 			uploaded_file.Finish ();
 
 			if (uploaded_file.Length > 0)
