@@ -1,6 +1,6 @@
 AC_INIT(README)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(manos, 0.1.3)
+AM_INIT_AUTOMAKE(manos, 0.1.4)
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
@@ -64,7 +64,7 @@ AC_SUBST(IO_COMPILE_FLAGS)
 	dnl *** Check for large file support                               ***
 	dnl *** (If we were using autoconf 2.50 we'd use AC_SYS_LARGEFILE) ***
 	dnl ******************************************************************
-	
+
 	# Check that off_t can represent 2**63 - 1 correctly, working around
 	# potential compiler bugs.  Defines LARGE_FILE_SUPPORT, adds $1 to
 	# CPPFLAGS and sets $large_offt to yes if the test succeeds
@@ -96,7 +96,7 @@ AC_SUBST(IO_COMPILE_FLAGS)
 		], "")
 		CPPFLAGS=$large_CPPFLAGS
 	])
-	
+
 	AC_MSG_CHECKING(if off_t is 64 bits wide)
 	LARGE_FILES("")
 	if test $large_offt = no; then
@@ -106,7 +106,7 @@ AC_SUBST(IO_COMPILE_FLAGS)
 	if test $large_offt = no; then
 		AC_MSG_WARN([No 64 bit file size support available])
 	fi
-	
+
 case "$host" in
 	*-*-linux*)
 		CPPFLAGS="$CPPFLAGS -DGC_LINUX_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP"
