@@ -2,7 +2,7 @@
 manosdir=$(bindir)
 
 #pkglib_DATA = $(top_srcdir)/build/Manos.dll $(top_srcdir)/build/Nini.dll
-manos_DATA = $(top_srcdir)/build/Manos.dll $(top_srcdir)/build/Manos.dll.mdb $(top_srcdir)/build/Nini.dll
+manos_DATA = $(top_srcdir)/build/Manos.dll $(top_srcdir)/build/Manos.pdb $(top_srcdir)/build/Nini.dll
 
 manos_proj_file = Manos.csproj
 manos_sources_in = Assembly/AssemblyInfo.cs.in

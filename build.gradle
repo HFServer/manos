@@ -25,7 +25,7 @@ task zip(type: Zip, dependsOn: build) {
   from buildDir
   include '*.dll'
   include '*.exe'
-  include '*.mdb'
+  include '*.pdb'
   destinationDir buildDir
 }
 

@@ -2,7 +2,7 @@
 manosdir=$(bindir)
 
 #pkglib_DATA = $(top_srcdir)/build/manostool.exe
-manos_DATA = $(top_srcdir)/build/manostool.exe $(top_srcdir)/build/manostool.exe.mdb
+manos_DATA = $(top_srcdir)/build/manostool.exe $(top_srcdir)/build/manostool.pdb
 
 manos_proj_file = manostool.csproj
 manos_sources_in = AssemblyInfo.cs.in

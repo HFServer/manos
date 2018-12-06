@@ -36,7 +36,7 @@ define MANOS_PC_SCRIPT
 Name: Manos
 Description: Manos
 Version: $(version)
-Libraries: $(install_prefix)/lib/manos/Manos.dll $(install_prefix)/lib/manos/Manos.dll.mdb 
+Libraries: $(install_prefix)/lib/manos/Manos.dll $(install_prefix)/lib/manos/Manos.pdb
 
 Requires: 
 Libs: -r:$(install_prefix)/lib/manos/Manos.dll

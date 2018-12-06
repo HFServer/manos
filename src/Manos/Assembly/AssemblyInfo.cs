@@ -32,6 +32,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle ("Manos.dll")]
-[assembly: AssemblyVersion("0.1.3")]
+[assembly: AssemblyVersion("0.1.5")]
 
 

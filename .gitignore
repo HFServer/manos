@@ -2,7 +2,7 @@
 obj
 bin/
 *.pidb
-*.mdb
+*.pdb
 build/
 config.log
 config.make
